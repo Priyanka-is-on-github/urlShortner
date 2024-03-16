@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener</title>
+    <link rel="stylesheet" href="output.css">
+</head>
+<body>
+    <main class=" justify-center  items-center  text-center">
+        <section class="form-section  ">
+            <h1 class="page-title font-serif text-2xl  my-4  text-blue-950  ">URL Shortener</h1>
+            <form class="url-form  ">
+                <input type="url" placeholder="Please paste your link here" name="url" require autofocus class="url-input w-96  px-3  py-2  text-cyan-700">
+                <button type="button"  onclick="apiCall()"      class="submit-url px-8   py-2  mt-6   bg-sky-950 rounded-lg  text-white shadow-xl  "> Shorten!</button>
+            </form>
+
+        </section>
+
+        <div class="result-section text-cyan-700 mt-6  text-xl  flex justify-center  hover:cursor-pointer"> </div>
+    </main>
+
+    <script>
+        // const submitbtn = document.getElementsByClassName("submit-url")[0];
+        const urlInput = document.getElementsByClassName("url-input")[0];
+        const shortedUrl = document.getElementsByClassName("result-section")[0];
+       
+        
+
+
+        const apiCall= async ()=>{
+
+            
+           
+                shortedUrl.innerHTML= `<img src='spinners.svg' alt="loader  class=" flex items-center justify-center">` 
+            
+             const response = await fetch("http://localhost:1332/api/v1/shortUrl",{
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                crossDomain:true,
+                body:JSON.stringify( {longUrl:urlInput.value}) 
+                
+            })
+            
+            const shorturl = await response.json();
+
+            shortedUrl.innerHTML = shorturl.shortUrl; 
+           
+           
+        }
+
+        
+        // submitbtn.addEventListener("click",apiCall) 
+
+        shortedUrl.addEventListener("click", async function(){ 
+            const copiedUrl = shortedUrl.innerHTML 
+          
+            try {
+        await navigator.clipboard.writeText(copiedUrl);
+       
+      } catch (err) {
+        console.error('Unable to copy text:', err);
+        alert('Failed to copy shortUrl to clipboard');
+      }
+      shortedUrl.innerHTML= "copied";
+           
+        })
+        
+
+    </script>
+</body>
+</html>
